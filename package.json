@@ -1,0 +1,36 @@
+{
+  "name": "barebones-service",
+  "version": "1.0.0",
+  "description": "Barebones Service",
+  "main": "server.js",
+  "scripts": {
+    "build": "tsc",
+    "prestart": "npm run migrate",
+    "start": "node -r dotenv/config dist/server",
+    "migrate": "node -r dotenv/config ./node_modules/knex/bin/cli.js migrate:latest --knexfile src/infrastructure/database/database-config.ts",
+    "lint": "npx eslint ./src --fix"
+  },
+  "dependencies": {
+    "axios": "0.24.0",
+    "dotenv": "10.0.0",
+    "express": "4.17.2",
+    "knex": "0.95.15",
+    "mysql2": "2.3.3"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/jest": "^27.0.3",
+    "@types/node": "^17.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.43.0",
+    "eslint": "^8.27.0",
+    "eslint-config-airbnb-typescript": "^16.1.0",
+    "eslint-config-standard-with-typescript": "^23.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.5.1",
+    "eslint-plugin-promise": "^6.1.1",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.4"
+  },
+  "author": "Davi Mezencio",
+  "license": "ISC"
+}
