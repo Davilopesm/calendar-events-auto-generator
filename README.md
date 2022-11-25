@@ -52,10 +52,9 @@ All tests are inside `test` folder
 
 Things that should be improved in order to really user this service
 
-- Division of concerns
-  - Controller doing too much, harder to test
-
 - Better environment variables
-
-- Better code coverage
-- Add integration tests
+- Better test coverage adding more UTs and Integration tests
+- Security on requests
+- Batched SQS
+- Error and retry handling on async/publisher/consumer operations
+- Migrate cron jobs and plublisher to serverless function

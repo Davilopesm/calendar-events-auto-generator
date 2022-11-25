@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 import UserController from './controller';
 
 const router = Router();
-const DEFAULT_EVENTS_PER_PAGE = 50;
+const DEFAULT_EVENTS_PER_PAGE = 100;
 
 router.get('/:id/events', async (req: Request, res: Response, next) => {
   try {
@@ -10,7 +10,6 @@ router.get('/:id/events', async (req: Request, res: Response, next) => {
     const start: number = parseInt(req.query.start as string) || null;
     const userId: string = req.params.id;
     const calendarEvents = new UserController().getUserEvents(userId, start, limit);
-
     res.send(calendarEvents);
   } catch (error) {
     res.status(error.statusCode || 500).json({
