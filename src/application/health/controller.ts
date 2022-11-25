@@ -2,9 +2,9 @@ import { Router } from 'express';
 import databaseConnection from '../../infrastructure/database/database-connection';
 const router = Router();
 
-router.get('/health/check', async (_req, res) => {
+router.get('/health', async (_req, res) => {
   try {
-    await databaseConnection.select('*').from('table_example');
+    await databaseConnection.select('*').from('knex_migrations');
     res.sendStatus(200);
   } catch (error) {
     throw error;

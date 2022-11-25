@@ -15,6 +15,6 @@
     "semi": "off",
     "@typescript-eslint/semi": "off",
     "@typescript-eslint/no-misused-promises": "off",
-    "no-useless-catch": "warn"
+    "no-useless-catch": "off"
   }
 }
