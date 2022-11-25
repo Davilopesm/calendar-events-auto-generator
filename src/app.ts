@@ -1,6 +1,6 @@
 import * as express from 'express';
-import { HealthController } from './application/health/controller';
-import { UserController } from './application/user/controller';
+import { Health } from './application/health/routes';
+import { User } from './application/user/routes';
 
 class App {
   public server;
@@ -17,8 +17,8 @@ class App {
   }
 
   routes (): void {
-    this.server.use('/api/v1/', HealthController);
-    this.server.use('/api/v1/users', UserController);
+    this.server.use('/api/v1/', Health);
+    this.server.use('/api/v1/users', User);
   }
 }
 

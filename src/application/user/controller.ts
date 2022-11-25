@@ -1,40 +1,32 @@
-import { Router } from 'express';
 import GetUserEventsUseCase from '../../core/domain/user/get-user-events-use-case';
 import { PaginatedResponse } from './interfaces';
 
-const router = Router();
-const MAXIMUM_EVENTS_PER_PAGE = 50;
 const MAXIMUM_EVENTS = 5000;
+export default class UserController {
+  constructor (
+    private readonly getUserEventsUseCase = new GetUserEventsUseCase()
+  ) { }
 
-const paginateResponse = (start: number, limit: number, userId: string): { self: string, next: string } => {
-  const baseUrl = `localhost:3000/api/v1/users/${userId}/events`;
-  const nextId = start + limit;
+  private getPagination (start: number, limit: number, userId: string): { self: string, next: string } {
+    const baseUrl = `localhost:3000/api/v1/users/${userId}/events`;
+    const nextId = start + limit;
 
-  const next = nextId <= MAXIMUM_EVENTS ? `${baseUrl}?start=${nextId}` : null;
-  const self = start >= 0 ? `${baseUrl}?start=${start}` : `${baseUrl}`;
-  return { self, next };
-}
-
-router.get('/:id/events', async (req, res, next) => {
-  try {
-    const limit: number = parseInt(req.query.limit as string) || MAXIMUM_EVENTS_PER_PAGE;
-    console.log(limit);
-    const start: number = parseInt(req.query.start as string) || null;
-    const userId: string = req.params.id;
-
-    const calendarEvents = new GetUserEventsUseCase().execute(start, limit);
-
-    const { self, next } = paginateResponse(start, limit, userId);
-
-    const response: PaginatedResponse = {
-      self,
-      next,
-      items: calendarEvents
-    }
-    res.send(response);
-  } catch (error) {
-    throw error;
+    const next = nextId <= MAXIMUM_EVENTS ? `${baseUrl}?start=${nextId}` : null;
+    const self = start >= 0 ? `${baseUrl}?start=${start}` : `${baseUrl}`;
+    return { self, next };
   }
-})
 
-export const UserController = router;
+  getUserEvents (userId: string, start: number, limit: number): PaginatedResponse {
+    try {
+      const userCalendarEvents = this.getUserEventsUseCase.execute(start, limit)
+      const { self, next } = this.getPagination(start, limit, userId)
+      return {
+        self,
+        next,
+        items: userCalendarEvents
+      }
+    } catch (error: any) {
+      throw new Error(`Failed getting user events with: ${JSON.stringify(error.message)}`);
+    }
+  }
+}

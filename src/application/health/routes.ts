@@ -11,4 +11,4 @@ router.get('/health', async (_req, res) => {
   }
 })
 
-export const HealthController = router;
+export const Health = router;
