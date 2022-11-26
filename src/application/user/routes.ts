@@ -18,4 +18,16 @@ router.get('/:id/events', async (req: Request, res: Response, next) => {
   }
 })
 
+router.post('/:id/events', async (req: Request, res: Response, next) => {
+  try {
+    const userId: string = req.params.id;
+    await new UserController().createUserEvents(userId);
+    res.sendStatus(202);
+  } catch (error) {
+    res.status(error.statusCode || 500).json({
+      message: error.message
+    });
+  }
+})
+
 export const User = router;
