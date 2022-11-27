@@ -11,7 +11,6 @@ export default class UpsertUserEventsUseCase {
 
   private async getUserDatabaseEvents (userId: number): Promise<CalendarEvent[]> {
     const databaseEvents = await this.userEventRepository.findByUserId(userId);
-    console.log('Database Events', JSON.stringify(databaseEvents[0]));
     if (databaseEvents.length) {
       return databaseEvents as CalendarEvent[];
     }
@@ -50,28 +49,35 @@ export default class UpsertUserEventsUseCase {
   private async synchronizeEvents (userId: number, oldEvents: CalendarEvent[], newEvents: CalendarEvent[]): Promise<void> {
     await Promise.all(oldEvents.map(async oldEvent => {
       console.log('Starting to synchronize event', oldEvent.id);
-      // Ideally check equality based on entire object but our mock always return different IDs and same hour for simplicity atm
+      // Ideally check equality based on object ID but our mock always return different IDs for simplicity atm
       const updatedEvent = newEvents.find(element => element.url === oldEvent.url && element.title === oldEvent.title);
+
+      // If event does not exist on API but exists on DB it needs to be deleted
       if (!updatedEvent) {
-        console.log(`Event ${oldEvent.id} deleted for user ${userId}`);
+        console.log(`Event ${oldEvent.id} synchronized and deleted for user ${userId}`);
         await this.userEventRepository.delete(oldEvent.id);
         return;
       }
 
+      // If event exists on API and on DB and is different we need to update it
       if (!this.areEventsEqual(oldEvent, updatedEvent)) {
-        console.log(`Event ${oldEvent.id} updated for user ${userId}`);
+        console.log(`Event ${oldEvent.id} synchronized and updated for user ${userId}`);
         await this.userEventRepository.update(oldEvent.id, updatedEvent);
         return;
       }
 
-      const newEvent = oldEvents.find(element => element.id === updatedEvent.id);
-      if (newEvent) {
-        console.log(`Event ${newEvent.id} recently created for user ${userId}`);
+      // If event exists on API on DB and is equal on both we dont need to do anything for it
+      console.log(`Event ${oldEvent.id} synchronized with no changes for user ${userId}`);
+    }));
+
+    await Promise.all(newEvents.map(async newEvent => {
+      const updatedEvent = oldEvents.find(oldEvent => oldEvent.url === newEvent.url && oldEvent.title === newEvent.title)
+      // If event exists on API but not on DB it needs to be created
+      if (!updatedEvent) {
+        console.log(`Event ${newEvent.id} recently added for user ${userId}`);
         await this.userEventRepository.insert(userId, newEvent);
       }
-
-      console.log('No changes for event', oldEvent.id);
-    }));
+    }))
   }
 
   async execute (userId: number): Promise<void> {

@@ -10,7 +10,7 @@ export async function up (knex: Knex): Promise<void> {
     table.string('start')
     table.string('end')
     table.foreign('user_id').references('user.id')
-    table.unique(['id', 'user_id']);
+    table.unique(['id', 'user_id']); // No duplicated events for same user
   });
 }
 

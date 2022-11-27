@@ -37,6 +37,8 @@ describe('UpsertUserEventsUseCase', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.resetAllMocks();
+    UserEventRepository.prototype.findByUserId = jest.fn().mockResolvedValue([]);
     UserEventRepository.prototype.insert = jest.fn();
     httpClient.get = jest.fn()
       .mockResolvedValueOnce({ data: mockedApiResponse })
@@ -56,6 +58,7 @@ describe('UpsertUserEventsUseCase', () => {
     });
 
     it('Should save all api events when no database event is found for user id', async () => {
+      useCase = new UpsertUserEventsUseCase();
       await useCase.execute(3);
       expect(UserEventRepository.prototype.findByUserId).toHaveBeenCalledTimes(1);
       expect(httpClient.get).toHaveBeenCalledTimes(2);
@@ -90,13 +93,13 @@ describe('UpsertUserEventsUseCase', () => {
       expect(UserEventRepository.prototype.delete).toHaveBeenCalledWith(52);
     });
 
-    it('Should update event when is found on database and API but has different values', async () => {
+    it('Should update event when is found on database and API but has different values for start and end', async () => {
       const item = {
         id: 50,
         title: 'Super Mocked Interview 50',
-        url: 'wwww.super.mocked.zoom.us/newValueForURL',
-        start: '2022-11-25T12:38:20.557Z',
-        end: '2022-11-25T13:08:20.557Z'
+        url: 'wwww.super.mocked.zoom.us/interview50',
+        start: '2022-11-26T12:38:20.557Z',
+        end: '2022-11-26T13:08:20.557Z'
       };
 
       const mockedResponseWithDifferentItems = {
