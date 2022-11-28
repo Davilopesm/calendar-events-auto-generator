@@ -1,5 +1,6 @@
 import { Producer } from 'sqs-producer';
 import { Consumer } from 'sqs-consumer';
+
 export default class SQSClient {
   private readonly queueUrl = 'http://localhost:9324/queue/default';
 

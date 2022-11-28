@@ -92,7 +92,7 @@ export default class UpsertUserEventsUseCase {
 
       await this.synchronizeEvents(userId, databaseEvents, apiEvents);
     } catch (error) {
-      console.error(error);
+      console.error('Failed upserting events for user ', userId);
       throw error;
     }
   }

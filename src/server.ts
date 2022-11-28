@@ -2,8 +2,7 @@ import app from './app';
 import UserEvents from './application/user/events';
 import cron = require('node-cron');
 
-// cron.schedule('0 * * * *', async () => {
-cron.schedule('* * * * *', async () => { // Cron to run every hour and send users to have their calendars synchronized
+cron.schedule('0 * * * *', async () => { // Cron to run every hour and send users to have their calendars synchronized
   await new UserEvents().createUserEvents();
 });
 
